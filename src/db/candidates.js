@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import { jobsDB } from './jobs.js';
 
 export const candidatesDB = new Dexie('CandidatesDB');
 
@@ -48,11 +49,6 @@ export const seedCandidates = async (jobIds) => {
   // Verify timeline entries were created
   const timelineCount = await candidatesDB.candidateTimeline.count();
   console.log(`✅ Created ${timelineCount} timeline entries in database`);
-  
-  // Test: Get timeline for first candidate
-  const firstCandidate = candidateIds[0];
-  const testTimeline = await candidatesDB.candidateTimeline.where('candidateId').equals(firstCandidate).toArray();
-  console.log(`🧪 Test timeline for candidate ${firstCandidate}:`, testTimeline);
 };
 
 export const getCandidatesByJob = (jobId) => candidatesDB.candidates.where('jobId').equals(jobId).toArray();
