@@ -1,26 +1,40 @@
-import { assessmentsDB } from '../db/assessments';
-import { seedQuestionBank } from '../db/assessments';
+import { jobsDB, seedJobs } from './jobs';
+import { candidatesDB, seedCandidates } from './candidates';
+import { assessmentsDB, seedQuestionBank, seedAssessments } from './assessments';
 
-export const resetAssessmentDatabase = async () => {
+export const resetFullDatabase = async () => {
   try {
-    // Clear all assessment data
-    await assessmentsDB.questionBank.clear();
-    await assessmentsDB.assessments.clear();
-    await assessmentsDB.assessmentResponses.clear();
-    await assessmentsDB.builderStates.clear();
-    
-    // Reseed with new question bank
+    console.log("🗑️ Clearing databases...");
+
+    // Clear everything in parallel
+    await Promise.all([
+      jobsDB.delete(),
+      candidatesDB.delete(),
+      assessmentsDB.delete(),
+    ]);
+
+    console.log("🔄 Re-initializing databases...");
+
+    // Seed jobs first
+    const jobs = await seedJobs();
+    const jobIds = jobs.map(j => j.id);
+
+    // Seed candidates
+    await seedCandidates(jobIds);
+
+    // Seed question bank + assessments
     await seedQuestionBank();
-    
-    console.log('✅ Assessment database reset complete');
+    await seedAssessments(jobs);
+
+    console.log("✅ Full database reset complete!");
     return true;
   } catch (error) {
-    console.error('❌ Failed to reset database:', error);
+    console.error("❌ Full database reset failed:", error);
     return false;
   }
 };
 
-// Make it available globally for testing
-if (typeof window !== 'undefined') {
-  window.resetAssessmentDB = resetAssessmentDatabase;
+// Make globally available
+if (typeof window !== "undefined") {
+  window.resetFullDB = resetFullDatabase;
 }

@@ -9,10 +9,11 @@ async function startApp() {
   // Wait for database to be ready
   await initializeDatabase()
   
-  // Start MirageJS server (only handles API routing)
   
-  makeServer()
-  console.log('✅ MirageJS server started')
+  
+    makeServer()
+    console.log('✅ MirageJS server started')
+
 
   // Render app
   const rootElement = document.getElementById('root')
