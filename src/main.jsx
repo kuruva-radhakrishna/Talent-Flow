@@ -10,10 +10,9 @@ async function startApp() {
   await initializeDatabase()
   
   // Start MirageJS server (only handles API routing)
-  if (process.env.NODE_ENV === 'development') {
-    makeServer()
-    console.log('✅ MirageJS server started')
-  }
+  
+  makeServer()
+  console.log('✅ MirageJS server started')
 
   // Render app
   const rootElement = document.getElementById('root')
